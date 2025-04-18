@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Number Guessing Game</h1>
+    </header>
+
+    <main>
+        <div id="game-message"></div>
+
+        <!-- Start Game Form -->
+        <div id="start-game">
+            <input type="text" id="name" placeholder="Enter your name" />
+            <button id="start-btn">Start Game</button>
+        </div>
+
+        <!-- Guess Form and Previous Guesses -->
+        <div id="guess-section" style="display:none;">
+            <!-- Box for Previous Guesses -->
+            <div id="previous-guesses-box">
+                <h3>Previous Guesses</h3>
+                <div id="previous-guesses"></div>
+            </div>
+
+            <!-- Input for New Guess (only one input field) -->
+            <div class="input-wrapper">
+                <input type="number" id="guess-input" placeholder="Enter your guess" />
+                <button id="guess-btn">Submit Guess</button>
+            </div>
+
+            <!-- Result Message -->
+            <div id="result"></div>
+        </div>
+    </main>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const guessBtn = document.getElementById('guess-btn');
+        const guessInput = document.getElementById('guess-input');
+        const gameMessage = document.getElementById('game-message');
+        const nameInput = document.getElementById('name');
+        const startGameDiv = document.getElementById('start-game');
+        const guessSectionDiv = document.getElementById('guess-section');
+        const previousGuessesDiv = document.getElementById('previous-guesses');
+        const resultDiv = document.getElementById('result');
+
+        let playerName = '';
+        let previousGuesses = [];
+
+        startBtn.addEventListener('click', function() {
+            playerName = nameInput.value.trim();
+            if (playerName) {
+                startGame(playerName);
+            } else {
+                alert("Please enter a name to start the game!");
+            }
+        });
+
+        guessBtn.addEventListener('click', function() {
+            const guess = parseInt(guessInput.value.trim(), 10);
+            if (isNaN(guess)) {
+                alert("Please enter a valid number!");
+            } else {
+                submitGuess(guess);
+            }
+        });
+
+        function startGame(name) {
+            fetch('/start_game', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                gameMessage.textContent = data.message;
+                startGameDiv.style.display = 'none';
+                guessSectionDiv.style.display = 'block';
+                previousGuesses = [];
+                previousGuessesDiv.innerHTML = '';
+                resultDiv.innerHTML = '';
+                guessInput.value = '';
+            })
+            .catch(error => console.error('Error starting game:', error));
+        }
+
+        function submitGuess(guess) {
+            fetch('/submit_guess', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ guess: guess })
+            })
+            .then(response => response.json())
+            .then(data => {
+                gameMessage.textContent = data.message;
+                guessInput.value = guess;
+                previousGuesses.push({ guess: guess, message: data.message });
+                displayPreviousGuesses();
+                displayResultMessage(data.message);
+            })
+            .catch(error => console.error('Error submitting guess:', error));
+        }
+
+        function displayPreviousGuesses() {
+            previousGuessesDiv.innerHTML = '';
+            previousGuesses.forEach((guessData, index) => {
+                const guessDiv = document.createElement('div');
+                guessDiv.classList.add('guess-item');
+
+                const guessField = document.createElement('input');
+                guessField.type = 'number';
+                guessField.value = guessData.guess;
+                guessField.readOnly = true;
+
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = guessData.message;
+                messageDiv.classList.add(guessData.message.includes('too high') ? 'high' : 'low');
+
+                guessDiv.appendChild(guessField);
+                guessDiv.appendChild(messageDiv);
+                previousGuessesDiv.appendChild(guessDiv);
+            });
+        }
+
+        function displayResultMessage(message) {
+            resultDiv.textContent = message;
+            resultDiv.classList.add(message.includes('too high') ? 'high' : 'low');
+        }
+    </script>
+</body>
+</html>
