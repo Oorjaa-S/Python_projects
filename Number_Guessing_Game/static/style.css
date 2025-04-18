@@ -1,0 +1,99 @@
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    background-color: #5d979e;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color:  #5d979e;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: white;
+    color: #5d979e;
+    border-width: 1px solid;
+    border-color: #5d979e;
+}
+
+/* Styling for the guess input section */
+#guess-section {
+    margin-top: 20px;
+}
+
+/* Box for previous guesses */
+#previous-guesses-box {
+    background-color:  #5d979e;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#previous-guesses {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Flexbox for input and button */
+.input-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+input {
+    padding: 10px;
+    width: 200px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* Message under previous guesses */
+.high {
+    color: red;
+}
+
+.low {
+    color: red;
+}
+
+#result {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: red;
+}
+
+.guess-item {
+    margin-bottom: 10px;
+}
